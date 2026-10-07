@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Misión: Claves Obstétricas</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#efe9fa;--card:#fff;--tx:#17323a;--bd:#cbbfe8}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#171228;--card:#2b2248;--tx:#e6f1f4;--bd:#473a75}}
+:root[data-theme=dark]{--bg:#171228;--card:#2b2248;--tx:#e6f1f4;--bd:#473a75}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:14px system-ui,Arial,sans-serif;user-select:none}
+#hud{display:flex;flex-wrap:wrap;gap:6px 14px;padding:8px 12px;background:#9575cd;color:#fff;font-weight:600}
+#msg{padding:6px 12px;min-height:30px;background:var(--card);font-weight:600}
+#msg.bad{background:#ffcdd2;color:#b71c1c}#msg.ok{background:#c8e6c9;color:#1b5e20}#msg.warn{background:#ffe0b2;color:#e65100}
+#pb{display:flex;gap:8px;padding:4px 12px;flex-wrap:wrap}.pbx{flex:1;min-width:130px;font-size:12px}
+.bar{height:10px;background:var(--bd);border-radius:5px;overflow:hidden}.bar i{display:block;height:100%}
+#wrap{max-width:900px;margin:auto;position:relative}
+canvas{width:100%;display:block;image-rendering:pixelated;background:#222}
+#dlg{position:absolute;z-index:20;left:3%;right:3%;bottom:3%;max-height:94%;box-shadow:0 10px 36px #000a;animation:up .18s;overflow:auto;background:var(--card);border:3px solid #9575cd;border-radius:12px;padding:12px;display:none}
+button{font:inherit;padding:7px 11px;margin:3px 3px 0 0;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);cursor:pointer}
+@keyframes up{from{transform:translateY(24px);opacity:0}}@keyframes pop{from{transform:scale(.92)}}@keyframes shake{25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+.fb{padding:7px 9px;border-radius:8px;margin-bottom:8px;font-weight:700;animation:pop .3s;background:#efe8fb;color:#3b2a6b}.fb.ok{background:#c8e6c9;color:#1b5e20}.fb.bad{background:#ffcdd2;color:#b71c1c;animation:shake .35s}.fb.warn{background:#ffe0b2;color:#e65100}
+button:active{transform:scale(.95)}
+button.p{background:#9575cd;color:#fff;border:0}
+#pad{display:flex;justify-content:space-between;padding:8px 14px}#pad div{display:grid;grid-template-columns:repeat(3,48px);gap:4px}
+#pad button{margin:0;height:48px;font-size:18px;touch-action:none}
+.st{font-size:12px;opacity:.6}.st.d{text-decoration:line-through;color:#2e7d32;opacity:1}.st.n{opacity:1;font-weight:700}
+
+body{background:#1a1530}
+@keyframes bl{50%{opacity:.35}}
+#hud{background:#2a2140;color:#efe8fb;border-bottom:4px solid #9575cd;font:10px 'Press Start 2P','Courier New',monospace;gap:8px;padding:8px 10px;align-items:center;justify-content:space-between}
+.hb{background:#1a1530;border:2px solid #5a4a8a;box-shadow:inset 0 0 0 2px #0006;padding:6px 8px;display:inline-flex;align-items:center;gap:4px;font-weight:400}
+.hb.tm{color:#69f0ae;font:20px 'VT323','Courier New',monospace;padding:3px 8px}.hb.tm.low{color:#ff5252;animation:bl .5s infinite}
+.slot{display:inline-block;width:22px;height:22px;border:2px solid #5a4a8a;background:#120e24;text-align:center;line-height:18px;font-size:13px;font-style:normal}
+#msg{background:#1a1530;color:#efe8fb;font:20px 'VT323','Courier New',monospace;font-weight:400;border-bottom:4px solid #2a2140;padding:5px 12px}
+#msg::before{content:'▶ ';color:#ffd54f}#msg.ok{background:#12301c;color:#b9f6ca}#msg.bad{background:#4a1418;color:#ffcdd2}#msg.warn{background:#4a2c0a;color:#ffe0b2;animation:none}
+#pb{background:#221a3d;border-bottom:4px solid #2a2140;padding:6px 10px}#pb:empty{display:none}
+.pbx{font:8px/1.4 'Press Start 2P','Courier New',monospace;color:#efe8fb;border-left:5px solid #8c7fb5;padding-left:6px;text-transform:uppercase}
+.bar{height:12px;background:#120e24;border:2px solid #5a4a8a;border-radius:0;position:relative;margin-top:3px}.bar::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 8px,#120e24 8px 10px)}.bar i{border-radius:0}
+#dlg{font:19px/1.15 'VT323','Courier New',monospace;background:#fdf6e3;color:#2b2118;border:0;border-radius:0;padding:0;box-shadow:0 0 0 4px #2a2140,0 0 0 8px #9575cd,0 0 0 12px #2a2140,8px 14px 0 12px #0006}
+.th{position:sticky;top:0;z-index:2;background:#9575cd;color:#fff;font:10px 'Press Start 2P','Courier New',monospace;padding:10px;display:flex;justify-content:space-between;align-items:center;border-bottom:4px solid #2a2140;background-image:repeating-linear-gradient(90deg,#0000 0 10px,#ffffff14 10px 20px)}
+.tb{padding:12px}#dlg h3{font:12px/1.5 'Press Start 2P','Courier New',monospace;margin:4px 0 10px}
+#dlg button{font:inherit;font-size:19px;background:#fff;color:#2a2140;border:3px solid #2a2140;border-radius:0;box-shadow:inset -3px -3px 0 #c9bfe4,3px 3px 0 #2a2140;padding:4px 9px;margin:6px 7px 2px 0}
+#dlg button:hover{background:#e1d5f7}#dlg button:active{transform:translate(3px,3px);box-shadow:inset -3px -3px 0 #c9bfe4,0 0 0 #0000}
+#dlg button.p{background:#a58ad9;color:#fff;box-shadow:inset -3px -3px 0 #5e3f9e,3px 3px 0 #2a2140}
+#dlg button.kR{background:#e53935;color:#fff;box-shadow:inset -3px -3px 0 #8e1b19,3px 3px 0 #2a2140}#dlg button.kA{background:#1e88e5;color:#fff;box-shadow:inset -3px -3px 0 #0d47a1,3px 3px 0 #2a2140}#dlg button.kY{background:#fdd835;box-shadow:inset -3px -3px 0 #b39b00,3px 3px 0 #2a2140}
+#dlg button.x{background:#e53935;color:#fff;font:10px 'Press Start 2P',monospace;margin:0;padding:6px 8px;box-shadow:inset -2px -2px 0 #8e1b19}
+#dlg hr{border:0;border-top:3px dashed #b9a98a;margin:9px 0}
+#dlg .st{color:#6b5b45;opacity:1;font-size:19px}#dlg .st.d{color:#2e7d32;text-decoration:none}#dlg .st.n{color:#2a2140;background:#fff3b0;padding:1px 4px}
+.sp::before{content:'☐ '}.sp.d::before{content:'☑ '}.sp.n::before{content:'▶ '}
+#dlg .fb{border:3px solid #2a2140;border-radius:0;font-weight:400}
+#snd{position:absolute;top:6px;right:6px;z-index:15;font-size:16px;padding:4px 7px;margin:0;background:#2a2140cc;color:#fff;border:2px solid #5a4a8a;border-radius:0;cursor:pointer}
+#dlg button:disabled{opacity:.5;cursor:not-allowed;box-shadow:none;transform:none}
+</style><link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head><body>
+<div id="hud"></div><div id="msg">Haz clic en una habitación para ir hacia ella</div><div id="pb"></div>
+<div id="wrap"><button id="snd" onclick="toggleSnd()" title="Sonido (M)">🔊</button><canvas id="c" width="640" height="420"></canvas><div id="dlg"></div></div>
+<script>
+/* ============ PROTOCOLO CONFIGURABLE ============
+ EJEMPLO GENÉRICO: reemplazar por el protocolo de tu curso/institución.
+ paso: {txt, item:'id de material' | accion:'id de acción junto a la paciente', req:true si necesita al equipo presente} */
+const PROTOCOLO={
+ R:{nombre:'Clave Roja',color:'#e53935',signos:'Sangrado vaginal abundante tras el parto, útero blando, palidez, PA 80/50, FC 125.',
+  pasos:[{txt:'Vía venosa y fluidos',item:'via'},{txt:'Medicamento uterotónico',item:'oxi',req:true},{txt:'Masaje uterino',accion:'masaje'},{txt:'Hemoderivados',item:'gr',req:true}]},
+ A:{nombre:'Clave Azul',color:'#1e88e5',signos:'PA 170/115, cefalea intensa, visión borrosa, hiperreflexia, edemas.',
+  pasos:[{txt:'Vía venosa',item:'via'},{txt:'Anticonvulsivante',item:'mg',req:true},{txt:'Antihipertensivo',item:'aht',req:true},{txt:'Control de signos vitales',accion:'signos'}]},
+ Y:{nombre:'Clave Amarilla',color:'#f9a825',signos:'Fiebre 39 °C, escalofríos, FC 130, hipotensión, flujo vaginal fétido.',
+  pasos:[{txt:'Toma de muestras (cultivos)',item:'hemo'},{txt:'Vía venosa y fluidos',item:'via'},{txt:'Antibiótico',item:'atb',req:true},{txt:'Control de signos vitales',accion:'signos'}]}};
+const ITEMS={via:['Vía + fluidos','💧','enf'],oxi:['Uterotónico','💉','far'],mg:['Anticonvulsivante','🧪','far'],aht:['Antihipertensivo','💊','far'],atb:['Antibiótico','💉','far'],hemo:['Kit de cultivos','🧫','lab'],gr:['Paquete globular','🩸','ban']};
+const ACCIONES={masaje:'🤲 Masaje uterino',signos:'📟 Control de signos'};
+const NOMBRES={R:'María',A:'Lucía',Y:'Carmen'};
+const BEDS={b1:{x:60,y:60,r:'Emergencia',room:'emg'},b2:{x:315,y:70,r:'Sala de partos',room:'par'},b3:{x:560,y:340,r:'Referencia',room:'ref'}};
+const LV=[{t:'Primera guardia',time:170,p:[['R','b1',0]]},{t:'Segunda guardia',time:170,p:[['A','b1',0]]},{t:'Tercera guardia',time:170,p:[['Y','b1',0]]},{t:'Emergencias simultáneas',time:260,p:[['Y','b2',0],['A','b1',25],['R','b3',50]]}];
+const DRAIN={R:.8,A:.55,Y:.4};
+/* ================================================ */
+const $=i=>document.getElementById(i),cv=$('c'),cx=cv.getContext('2d');
+const W=[[0,146,90,8],[130,146,170,8],[340,146,170,8],[550,146,90,8],[0,246,60,8],[100,246,120,8],[260,246,120,8],[420,246,120,8],[580,246,60,8],[206,0,8,146],[416,0,8,146],[156,254,8,166],[316,254,8,166],[476,254,8,166]];
+const ROOMS=[[0,0,206,146,'#e3f4f1','EMERGENCIA OBSTÉTRICA'],[214,0,202,146,'#e8f0fb','SALA DE PARTOS'],[424,0,216,146,'#fdeef3','ENFERMERÍA'],[0,254,156,166,'#f1e8f7','LABORATORIO'],[164,254,152,166,'#eaf6e4','FARMACIA'],[324,254,152,166,'#fbe9e7','BANCO DE SANGRE'],[484,254,156,166,'#fff3e0','REFERENCIA']];
+const NPC=[{id:'enf',n:'Enfermera Rosa',x:520,y:60,c:'#f06292',team:1},{id:'med',n:'Dra. Vega (obstetra)',x:150,y:115,c:'#1e88e5',team:1},{id:'far',n:'Farmacéutico Leo',x:240,y:330,c:'#7cb342'},{id:'lab',n:'Téc. Marta (laboratorio)',x:80,y:330,c:'#ab47bc'},{id:'ban',n:'Téc. Iván (banco de sangre)',x:400,y:330,c:'#e57373'},{id:'amb',n:'Ramiro (ambulancia)',x:518,y:325,c:'#ffb74d'}];
+NPC.forEach(n=>{n.hx=n.x;n.hy=n.y;n.path=[]});
+ROOMS.forEach((r,i)=>r.push(['emg','par','enf','lab','far','ban','ref'][i]));
+let hov=null;
+const CENTRAL={x:320,y:200};
+let G,P,keys={},last=0,dlgOpen=false;
+let FBK=null,FL=[];function pop(t,c){FL.push({s:t,c:c,x:P.x,y:P.y-34,t0:performance.now()})}
+function msg(t,c){FBK={t:t,c:c||'info'};const m=$('msg');m.className=c||'';m.textContent=t;if(c=='bad')SFX.bad();else if(c=='warn')SFX.warn();else if(c=='ok')SFX.ok()}
+let AC=null,MUTE=false,amb=null;
+function ac(){if(!AC){try{AC=new(window.AudioContext||webkitAudioContext)()}catch(e){}}if(AC&&AC.state=='suspended')AC.resume();return AC}
+function tone(f,d,ty,v,t0,f2){const a=ac();if(!a||MUTE)return;const o=a.createOscillator(),g=a.createGain(),t=a.currentTime+(t0||0);o.type=ty||'square';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);g.gain.setValueAtTime(v||.06,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(a.destination);o.start(t);o.stop(t+d+.02)}
+function noise(d,v,fq,t0){const a=ac();if(!a||MUTE)return;const n=Math.floor(a.sampleRate*d),b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain();fl.type='lowpass';fl.frequency.value=fq;g.gain.value=v;s.buffer=b;s.connect(fl);fl.connect(g);g.connect(a.destination);s.start(a.currentTime+(t0||0))}
+function ambStart(){const a=ac();if(!a||MUTE||amb)return;const g=a.createGain();g.gain.value=.6;g.connect(a.destination);const o1=a.createOscillator(),o2=a.createOscillator(),g1=a.createGain();o1.frequency.value=55;o2.type='triangle';o2.frequency.value=110.6;g1.gain.value=.02;o1.connect(g1);o2.connect(g1);g1.connect(g);
+const n=a.sampleRate*2,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=Math.random()*2-1;const s=a.createBufferSource(),fl=a.createBiquadFilter(),g2=a.createGain();s.buffer=b;s.loop=true;fl.type='lowpass';fl.frequency.value=380;g2.gain.value=.03;s.connect(fl);fl.connect(g2);g2.connect(g);o1.start();o2.start();s.start();amb={stop(){try{o1.stop();o2.stop();s.stop();g.disconnect()}catch(e){}}}}
+function ambStop(){if(amb){amb.stop();amb=null}}
+const SFX={click:()=>tone(520,.05,'square',.04),step:()=>noise(.06,.07,500),door:()=>{noise(.18,.1,300);tone(140,.12,'sine',.08)},
+ok:()=>{tone(660,.1,'square',.05);tone(990,.16,'square',.05,.1)},bad:()=>tone(200,.28,'sawtooth',.07,0,90),warn:()=>{tone(880,.1,'square',.05);tone(880,.1,'square',.05,.16)},
+take:()=>{tone(700,.06,'triangle',.08);tone(1050,.08,'triangle',.08,.06)},scan:()=>{tone(500,.1,'sine',.08);tone(750,.14,'sine',.08,.1)},
+phone:()=>[0,.25,.5].forEach(t=>{tone(1000,.08,'square',.04,t);tone(800,.08,'square',.04,t+.09)}),
+key:k=>{const f={R:420,A:560,Y:700}[k];for(let i=0;i<4;i++)tone(i%2?f*1.5:f,.14,'sawtooth',.05,.25+i*.16)},
+alarm:()=>[0,.3,.6].forEach(t=>{tone(700,.14,'square',.05,t);tone(520,.14,'square',.05,t+.15)}),
+mon:m=>tone(m<30?1250:1000,.05,'sine',m<30?.06:.04),pa:()=>{tone(784,.35,'sine',.03);tone(988,.5,'sine',.03,.3);noise(.4,.01,900,.1)},
+heal:()=>[523,659,784,1047].forEach((f,i)=>tone(f,.18,'triangle',.08,i*.1)),win:()=>[523,659,784,659,784,1047].forEach((f,i)=>tone(f,.2,'square',.05,i*.14)),lose:()=>[392,330,262,196].forEach((f,i)=>tone(f,.3,'sawtooth',.06,i*.2))};
+function toggleSnd(){MUTE=!MUTE;$('snd').textContent=MUTE?'🔇':'🔊';if(MUTE)ambStop();else if(G&&G.run)ambStart()}
+addEventListener('keydown',e=>{if(e.key=='m'||e.key=='M')toggleSnd()});
+document.addEventListener('pointerdown',()=>ac());
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('button')&&e.target.id!='snd')SFX.click()});
+function dlg(h){dlgOpen=!!h;const d=$('dlg');d.style.display=h?'block':'none';const room=h&&h.includes('📍');d.innerHTML=h?`<div class="th"><span>${room?'📋 FICHA DE ATENCIÓN':'🏥 CLAVES OBSTÉTRICAS'}</span>${room?'<button class="x" onclick="dlg()">✕</button>':''}</div><div class="tb">${h}</div>`:''}
+const B=(t,f,c)=>`<button class="${c||''}" onclick="${f}">${t}</button>`;
+function home(){ambStop();G={lv:0,lives:3,score:0,run:false};P={x:320,y:200,inv:[],path:[],dest:null,room:null};dlg(`<h3>🏥 Misión: Claves Obstétricas</h3><p>Eres estudiante de Obstetricia en tu primera guardia. Haz clic en las habitaciones para desplazarte por el hospital: <b>observa</b> a cada gestante, <b>activa la clave</b>, reúne materiales, <b>coordina al equipo</b> y estabiliza a la paciente.</p><p class="st">Simulación académica. El protocolo es configurable y el incluido es solo un ejemplo.</p>${B('Comenzar','brief()','p')}`);hud()}
+function brief(){const l=LV[G.lv];dlg(`<h3>Nivel ${G.lv+1}: ${l.t}</h3><p>Tiempo: ${l.time}s · Vidas: ${'❤️'.repeat(G.lives)}</p><p class="st">Haz clic en una habitación para caminar hasta ella. Al llegar se abren las acciones disponibles.</p>${B('¡A la guardia!','startLv()','p')}`)}
+function startLv(){const l=LV[G.lv];dlg('');G.t=l.time;G.el=0;G.run=true;G.amT=6;G.bT=0;G.sT=0;ambStart();P.x=320;P.y=200;P.inv=[];P.path=[];P.dest=null;P.room=null;
+NPC.forEach(n=>{n.x=n.hx;n.y=n.hy;n.path=[]});
+G.pts=l.p.map((a,i)=>({id:i,k:a[0],bed:a[1],at:a[2],here:false,obs:false,act:false,step:0,st:70,done:false}));msg('Turno iniciado. Espera una emergencia…');hud()}
+function hud(){const T=Math.max(0,Math.ceil(G.t||0));
+$('hud').innerHTML=`<span class="hb">NIVEL ${G.lv+1}</span><span class="hb">${[0,1,2].map(i=>i<G.lives?'❤️':'🖤').join('')}</span><span class="hb">⭐ ${String(G.score).padStart(5,'0')}</span><span class="hb tm ${T<30&&G.run?'low':''}">⏱ ${Math.floor(T/60)}:${String(T%60).padStart(2,'0')}</span><span class="hb">🎒 ${[0,1,2].map(i=>`<i class="slot">${P.inv[i]?ITEMS[P.inv[i]][1]:''}</i>`).join('')}</span>`;
+$('pb').innerHTML=(G.pts||[]).filter(p=>p.here&&!p.done).map(p=>`<div class="pbx" style="border-color:${p.act?PROTOCOLO[p.k].color:'#8c7fb5'}">🤰 ${NOMBRES[p.k]} · ${BEDS[p.bed].r}<div class="bar"><i style="width:${Math.max(0,p.st)}%;background:${p.st<30?'#e53935':p.st<55?'#fb8c00':'#43a047'}"></i></div></div>`).join('')}
+function present(p){const b=BEDS[p.bed];return NPC.filter(n=>n.team).every(n=>Math.hypot(n.x-b.x,n.y-b.y)<50)}
+const DR={emg:[110,130],par:[320,130],enf:[530,130],lab:[80,270],far:[240,270],ban:[400,270],ref:[560,270]};
+const STAND={emg:[110,100],par:[320,115],enf:[480,100],lab:[80,300],far:[240,300],ban:[400,300],ref:[590,300]};
+const RN={emg:'Emergencia obstétrica',par:'Sala de partos',enf:'Enfermería',lab:'Laboratorio',far:'Farmacia',ban:'Banco de sangre',ref:'Área de referencia'};
+function zone(x,y){return y<146?(x<206?'emg':x<416?'par':'enf'):y>254?(x<156?'lab':x<316?'far':x<476?'ban':'ref'):'cor'}
+function route(x,y,tx,ty){const a=zone(x,y),b=zone(tx,ty),p=[];if(a!=b){if(a!='cor')p.push([DR[a][0],DR[a][1]],[DR[a][0],200]);if(b!='cor')p.push([DR[b][0],200],[DR[b][0],DR[b][1]])}p.push([tx,ty]);return p}
+function walk(o,path,dt,sp){if(!path.length)return;const t=path[0],d=Math.hypot(t[0]-o.x,t[1]-o.y),s=sp*dt;if(d<=s){o.x=t[0];o.y=t[1];path.shift()}else{o.x+=(t[0]-o.x)/d*s;o.y+=(t[1]-o.y)/d*s}}
+function update(dt){if(!G.run||dlgOpen)return;
+if(P.path.length){walk(P,P.path,dt,140);if(!P.path.length&&P.dest){P.room=P.dest;P.dest=null;SFX.door();msg('📍 Llegaste a '+RN[P.room]);panel(P.room)}}
+NPC.forEach(n=>walk(n,n.path,dt,70));
+if(P.path.length){G.sT-=dt;if(G.sT<=0){SFX.step();G.sT=.27}}
+G.amT-=dt;if(G.amT<=0){SFX.pa();G.amT=9+Math.random()*8}
+const pv=G.pts.filter(p=>p.here&&!p.done);if(pv.length){const mn=Math.min(...pv.map(p=>p.st));G.bT-=dt;if(G.bT<=0){SFX.mon(mn);G.bT=mn<30?.5:mn<55?.9:1.4}}
+G.el+=dt;G.t-=dt;let fail=null;
+G.pts.forEach(p=>{if(!p.here&&G.el>=p.at){p.here=true;SFX.alarm();msg('🚨 ¡Llega una gestante a '+BEDS[p.bed].r+'! Dirígete a esa habitación.','warn')}
+if(p.here&&!p.done){p.st-=DRAIN[p.k]*dt*(present(p)?.5:1)*(1+G.lv*.06);if(p.st<=0)fail='La paciente se descompensó gravemente.'}});
+if(G.t<=0)fail='Se agotó el tiempo.';if(fail)return lose(fail);hud()}
+function lose(r){G.run=false;G.lives--;G.score=Math.max(0,G.score-100);SFX.lose();ambStop();hud();
+dlg(G.lives<=0?`<h3>💀 Fin del juego</h3><p>${r}</p><p>Puntaje: ⭐ ${G.score}</p>${B('Reiniciar','home()','p')}`:`<h3>❌ Misión fallida</h3><p>${r}</p><p>Vidas: ${'❤️'.repeat(G.lives)}</p>${B('Reintentar nivel','brief()','p')}`)}
+function win(){G.run=false;ambStop();SFX.win();const b=Math.round(G.t)*2;G.score+=b;G.lv++;hud();
+dlg(G.lv>=LV.length?`<h3>🏆 ¡Victoria!</h3><p>Coordinaste todas las claves. Puntaje final: ⭐ ${G.score}</p>${B('Jugar de nuevo','home()','p')}`:`<h3>✅ ¡Paciente(s) estabilizada(s)!</h3><p>Bonus de tiempo +${b} · Puntaje ${G.score}</p>${B('Siguiente nivel','brief()','p')}`)}
+function goRoom(id){if(!G.run||P.dest==id)return;dlg();FBK=null;if(!P.path.length&&zone(P.x,P.y)==id){P.room=id;return panel(id)}
+P.room=null;P.dest=id;P.path=route(P.x,P.y,...STAND[id]);msg('🚶 Dirigiéndote a '+RN[id]+'…')}
+function panel(r){let h=(FBK?`<div class="fb ${FBK.c}">${FBK.t}</div>`:'')+`<b>📍 ${RN[r]}</b>`,any=false;FBK=null;
+Object.keys(ITEMS).filter(k=>ITEMS[k][2]==r).forEach(k=>{any=true;h+='<br>'+(P.inv.includes(k)?`<button disabled>${ITEMS[k][1]} Ya lo llevas</button>`:B(ITEMS[k][1]+' Tomar '+ITEMS[k][0],`take('${k}')`))});
+G.pts.filter(p=>p.here&&!p.done&&BEDS[p.bed].room==r).forEach(p=>{any=true;const pr=PROTOCOLO[p.k];h+=`<hr><b>🤰 ${NOMBRES[p.k]}</b><br>`;
+if(!p.obs)h+=B('👁️ Observar a la paciente',`obs(${p.id})`);
+else{h+=`<div class="st n">${pr.signos}</div>`;
+if(!p.act)h+=Object.keys(PROTOCOLO).map(k=>B('🚨 Activar '+PROTOCOLO[k].nombre,`key(${p.id},'${k}')`,'k'+k)).join('');
+else h+=pr.pasos.map((s,i)=>`<div class="st sp ${i<p.step?'d':i==p.step?'n':''}">${i+1}. ${s.txt}${s.req?' 👥':''}</div>`).join('')+[...new Set(P.inv)].map(i=>B(ITEMS[i][1]+' Usar '+ITEMS[i][0],`use(${p.id},'${i}',1)`)).join('')+Object.keys(ACCIONES).map(a=>B(ACCIONES[a],`use(${p.id},'${a}',0)`)).join('')}});
+if(r=='enf'||r=='emg'){any=true;const ac=G.pts.filter(p=>p.here&&!p.done&&p.act);h+='<hr><span class="st">'+(r=='enf'?'Enfermera Rosa':'Dra. Vega')+': “'+(r=='enf'?'¿A qué paciente vamos?':'Primero reconocer, luego activar la clave.')+'”</span><br>'+ac.map(p=>B('📞 Llamar equipo a '+NOMBRES[p.k],`call(${p.id})`)).join('')+B('Equipo a su puesto','home2()')}
+if(r=='ref'){any=true;h+='<hr><span class="st">Ramiro: “Ambulancia lista.” (Acción de referencia configurable.)</span>'}
+if(!any)h+='<br><span class="st">Sin acciones disponibles aquí por ahora.</span>';
+dlg(h+'<hr>'+B('Salir','dlg()'))}
+function take(k){if(P.inv.includes(k)){msg('Ya llevas '+ITEMS[k][0]+'.','warn');return panel(P.room)}if(P.inv.length>=3){msg('Solo puedes cargar 3 materiales.','bad');return panel(P.room)}P.inv.push(k);SFX.take();pop('+'+ITEMS[k][1],'#9575cd');msg('Tomaste: '+ITEMS[k][0]);hud();panel(P.room)}
+function call(i){const b=BEDS[G.pts[i].bed];NPC.filter(n=>n.team).forEach((n,j)=>{n.path=route(n.x,n.y,b.x+(j?-30:30),b.y+10)});dlg();SFX.phone();pop('📞 Equipo en camino','#1565c0');msg('📞 El equipo se dirige con la paciente.','ok')}
+function home2(){NPC.filter(n=>n.team).forEach(n=>{n.path=route(n.x,n.y,n.hx,n.hy)});dlg();msg('El equipo vuelve a su puesto.')}
+function obs(i){G.pts[i].obs=true;SFX.scan();G.score+=20;pop('+20 👁️','#2e7d32');msg('👁️ Observaste a la paciente. Reconoce la emergencia.');panel(P.room)}
+function key(i,k){const p=G.pts[i];if(k==p.k){p.act=true;G.score+=100;SFX.key(k);pop('+100 🚨','#2e7d32');msg('✅ '+PROTOCOLO[k].nombre+' activada. Reúne materiales y llama al equipo.','ok')}else{p.st-=12;G.score=Math.max(0,G.score-30);pop('-12 ❤️','#c62828');msg('⚠️ Esa clave no corresponde a los signos observados.','bad')}hud();panel(P.room)}
+function use(i,id,it){const p=G.pts[i],s=PROTOCOLO[p.k].pasos[p.step];
+if((s.item||s.accion)!=id){p.st-=8;G.score=Math.max(0,G.score-20);pop('-8 ❤️','#c62828');msg('⚠️ Acción fuera de secuencia. Revisa el paso siguiente.','bad');return panel(P.room)}
+if(s.req&&!present(p)){msg('👥 Falta el equipo junto a la paciente. Llámalo desde Enfermería o Emergencia.','warn');return panel(P.room)}
+if(it)P.inv.splice(P.inv.indexOf(id),1);p.step++;p.st=Math.min(100,p.st+12);G.score+=60;pop('+60 ✓','#2e7d32');msg('✅ '+s.txt+' realizado.','ok');
+if(p.step>=PROTOCOLO[p.k].pasos.length){p.done=true;SFX.heal();G.score+=100+Math.round(p.st);msg('💚 '+NOMBRES[p.k]+' estabilizada.','ok');if(G.pts.every(x=>x.done)){dlg();return setTimeout(win,700)}}
+hud();panel(P.room)}
+/* ---------- dibujo ---------- */
+let C=cx,BG=null;const R=(c,x,y,w,h)=>{C.fillStyle=c;C.fillRect(Math.round(x),Math.round(y),w,h)};
+function tiles(x,y,w,h,a,b,sz,g){for(let i=0;i<w;i+=sz)for(let j=0;j<h;j+=sz)R(((i+j)/sz)%2?a:b,x+i,y+j,Math.min(sz,w-i),Math.min(sz,h-j));for(let i=0;i<w;i+=sz)R(g,x+i,y,1,h);for(let j=0;j<h;j+=sz)R(g,x,y+j,w,1)}
+function shelf(x,y,w,cols){R('#6d4c41',x,y,w,3);R('#0003',x,y+3,w,2);for(let i=2;i<w-4;i+=7){R(cols[(i/7|0)%cols.length],x+i,y-9,5,9);R('#fff6',x+i,y-9,1,9)}}
+function plant(x,y){R('#8d6e63',x-4,y,9,7);R('#2e7d32',x-6,y-8,13,8);R('#66bb6a',x-3,y-13,7,6)}
+function bedS(x,y){R('#455a64',x-22,y-13,44,26);R('#eceff1',x-20,y-11,40,22);R('#fff',x-19,y-9,11,18);R('#cfd8dc',x-19,y-9,11,2);R('#4fc3f7',x-6,y-10,24,20);R('#81d4fa',x-6,y-10,24,3);R('#0277bd',x-6,y+7,24,3);R('#455a64',x+19,y-13,3,26);R('#37474f',x+26,y-20,2,24);R('#37474f',x+22,y+3,10,2);R('#37474f',x+26,y-30,12,12);R('#8c7fb5',x+25,y-31,14,1)}
+function buildBG(){const bg=document.createElement('canvas');bg.width=640;bg.height=420;C=bg.getContext('2d');
+tiles(0,146,640,108,'#f1edf8','#e6e0f1',18,'#0000000f');R('#c5b3ec',0,198,640,3);for(let i=0;i<640;i+=24)R('#f1edf8',i,198,10,3);[80,300,520].forEach(x=>R('#ffffff66',x-40,172,80,10));
+const T=[['#ece4fa','#e2d7f6',16],['#dde8f8','#d0def3',16],['#fbe4ec','#f6d6e2',16],['#ecdff5','#e1d0ee',14],['#e2f3d9','#d5eac9',16],['#fbdcd8','#f4cdc8',16],['#e9e4da','#ddd7ca',20]];
+ROOMS.forEach((r,i)=>tiles(r[0],r[1],r[2],r[3],T[i][0],T[i][1],T[i][2],'#00000012'));
+R('#fbc02d',490,410,150,3);R('#fbc02d',490,360,3,50);
+W.forEach(w=>{R('#6a5f8f',w[0],w[1],w[2],w[3]);if(w[2]>w[3]){R('#c9bfe4',w[0],w[1],w[2],4);R('#8c7fb5',w[0],w[1]+4,w[2],2);R('#0002',w[0],w[1]+w[3],w[2],4)}else{R('#c9bfe4',w[0],w[1],4,w[3]);R('#8c7fb5',w[0]+4,w[1],2,w[3]);R('#0002',w[0]+w[2],w[1],4,w[3])}});
+[[90,146],[300,146],[510,146],[60,246],[220,246],[380,246],[540,246]].forEach(d=>{R('#bcaaa4',d[0],d[1],40,8);R('#8d6e63',d[0],d[1]+3,40,1);R('#eceff1',d[0]-3,d[1],3,8);R('#eceff1',d[0]+40,d[1],3,8)});
+Object.keys(BEDS).forEach(k=>bedS(BEDS[k].x,BEDS[k].y));
+// Emergencia
+R('#fff',92,8,18,18);R('#e53935',99,10,4,14);R('#e53935',94,15,14,4);R('#c62828',166,28,24,20);R('#b71c1c',166,36,24,1);R('#b71c1c',166,42,24,1);R('#ffeb3b',176,32,4,2);plant(192,128);
+// Partos
+R('#cfd8dc',372,40,30,16);R('#ff9800',372,26,30,6);R('#ffe0b2',380,32,14,3);R('#fff',376,44,22,8);R('#90a4ae',230,10,44,16);R('#8c7fb5',230,17,44,1);plant(232,128);
+// Enfermería
+R('#8d6e63',440,24,100,18);R('#a1887f',440,24,100,4);R('#263238',460,10,22,14);R('#4dd0e1',462,12,18,9);R('#455a64',500,46,12,8);shelf(580,30,48,['#ef5350','#42a5f5','#fdd835','#fff']);plant(620,128);
+// Laboratorio
+shelf(10,282,60,['#e53935','#fdd835','#1e88e5','#43a047']);shelf(80,282,50,['#fff','#90caf9','#ce93d8']);R('#c9bfe4',30,296,100,12);R('#8c7fb5',30,308,100,3);R('#37474f',50,284,8,12);R('#90a4ae',54,280,4,6);[['#e53935',92],['#fdd835',97],['#1e88e5',102],['#43a047',107]].forEach(t=>R(t[0],t[1],288,3,8));R('#cfd8dc',115,284,16,12);R('#eceff1',135,274,16,40);R('#90a4ae',135,292,16,1);
+// Farmacia
+shelf(176,282,60,['#b39ddb','#ef5350','#fff','#ffa726']);shelf(244,282,62,['#fdd835','#42a5f5','#fff','#66bb6a']);R('#6d4c41',180,296,110,12);R('#fafafa',180,294,110,4);R('#2e7d32',296,262,12,12);R('#fff',300,264,4,8);R('#fff',297,267,10,2);
+// Banco de sangre
+R('#eceff1',332,274,46,34);R('#90a4ae',332,290,46,1);R('#1565c0',334,276,42,3);[0,8,16,24,32].forEach(i=>R('#c62828',335+i,282,6,9));R('#6d4c41',400,296,70,12);R('#fafafa',400,294,70,4);C.fillStyle='#e53935';C.beginPath();C.arc(450,276,6,0,7);C.fill();
+// Referencia
+R('#fafafa',492,276,54,22);R('#e0e0e0',546,282,10,16);R('#4fc3f7',548,284,6,6);R('#e53935',492,286,54,3);R('#e53935',514,279,3,8);R('#e53935',511,282,9,3);R('#263238',500,296,9,8);R('#263238',534,296,9,8);
+// Pasillo
+R('#8d6e63',20,232,50,7);R('#6d4c41',22,239,3,6);R('#6d4c41',65,239,3,6);plant(612,238);plant(250,166);
+R('#263238',186,156,28,12);R('#e53935',189,159,6,6);R('#1e88e5',197,159,6,6);R('#f9a825',205,159,6,6);
+C.font='bold 9px sans-serif';ROOMS.forEach(r=>{const w=C.measureText(r[5]).width+10,ty=r[1]?r[1]+4:r[3]-16;R('#7e57c2dd',r[0]+4,ty,w,12);C.fillStyle='#fff';C.fillText(r[5],r[0]+9,ty+9)});
+C=cx;return bg}
+const LOOK={player:{c:'#b39ddb',h:'#4e342e',pony:1,badge:1},enf:{c:'#f06292',h:'#212121',cap:'#fff'},med:{c:'#1e88e5',coat:1,h:'#5d4037',bun:1,st:1},far:{c:'#7cb342',coat:1,h:'#9e9e9e',gl:1},lab:{c:'#ab47bc',h:'#3e2723',gl:1,mask:1},ban:{c:'#c62828',h:'#212121',cap:'#c62828',mask:1},amb:{c:'#ff9800',h:'#6d4c41',cap:'#ff9800',vest:1}};
+function person(x,y,o,mv,t){const ph=Math.sin(t/100),b=mv?-Math.abs(ph)*1.5:0,l=mv?ph*2.5:0;x=Math.round(x);y=Math.round(y);
+R('#0003',x-8,y+9,16,4);R('#37474f',x-4,y+4+l,3,6);R('#37474f',x+1,y+4-l,3,6);R('#fafafa',x-5,y+9+l,4,2);R('#fafafa',x+1,y+9-l,4,2);
+R('#2a2140',x-7,y-8+b,14,13);R(o.c,x-6,y-7+b,12,11);R('#0002',x+3,y-7+b,3,11);
+if(o.coat){R('#fff',x-6,y-7+b,4,12);R('#fff',x+2,y-7+b,4,12);R('#e0e0e0',x-6,y+2+b,12,2)}
+if(o.vest)R('#ffeb3b',x-6,y-1+b,12,2);if(o.st){R('#263238',x-2,y-7+b,1,5);R('#263238',x+1,y-7+b,1,5);R('#90a4ae',x-1,y-2+b,2,2)}if(o.badge)R('#fff',x+2,y-4+b,3,3);
+R(o.c,x-8,y-6+b,2,7);R(o.c,x+6,y-6+b,2,7);R('#ffcc99',x-8,y+1+b,2,2);R('#ffcc99',x+6,y+1+b,2,2);
+R('#2a2140',x-6,y-18+b,12,11);R('#ffcc99',x-5,y-17+b,10,9);R(o.h,x-5,y-17+b,10,3);R(o.h,x-5,y-17+b,2,6);R(o.h,x+3,y-17+b,2,5);
+if(o.pony)R(o.h,x+5,y-14+b,2,7);if(o.bun)R(o.h,x-2,y-20+b,5,3);if(o.cap){R(o.cap,x-5,y-19+b,10,4);R('#ffffff99',x-5,y-19+b,10,1)}
+R('#222',x-3,y-12+b,2,2);R('#222',x+1,y-12+b,2,2);if(o.gl){R('#37474f',x-4,y-13+b,4,1);R('#37474f',x,y-13+b,4,1)}
+if(o.mask)R('#b3e5fc',x-5,y-10+b,10,3);else R('#c0605a',x-1,y-9+b,3,1)}
+function draw(t){if(!BG)BG=buildBG();C=cx;cx.drawImage(BG,0,0);
+ROOMS.forEach(r=>{const id=r[6],pa=G.pts&&G.pts.some(p=>p.here&&!p.done&&BEDS[p.bed].room==id);if(id==hov){R('#9575cd22',r[0],r[1],r[2],r[3])}if(id==hov||pa){cx.lineWidth=3;cx.strokeStyle=id==hov?'#9575cd':(Math.floor(t/400)%2?'#ff1744':'#ffab91');cx.strokeRect(r[0]+2,r[1]+2,r[2]-4,r[3]-4);cx.lineWidth=1}});
+const on=Math.floor(t/250)%2;R(on?'#f44336':'#2196f3',506,272,10,4);R(on?'#2196f3':'#f44336',522,272,10,4);
+Object.keys(BEDS).forEach(k=>{const b=BEDS[k],p=G.pts&&G.pts.find(q=>q.bed==k&&q.here&&!q.done);R('#050a0c',b.x+27,b.y-29,10,9);
+if(p){cx.strokeStyle=p.st<30?'#ff5252':'#69f0ae';cx.beginPath();const sp=Math.floor(t/(p.st<30?90:200));for(let i=0;i<10;i++){const yy=b.y-24+((sp+i)%6==0?-3:0);i?cx.lineTo(b.x+28+i,yy):cx.moveTo(b.x+28,yy)}cx.stroke()}});
+G.pts&&G.pts.forEach(p=>{if(!p.here||p.done)return;const b=BEDS[p.bed],pr=PROTOCOLO[p.k],hc={R:'#6d4c41',A:'#212121',Y:'#c0562b'}[p.k];
+if(p.act){const g=cx.createRadialGradient(b.x,b.y,6,b.x,b.y,46);g.addColorStop(0,pr.color+'77');g.addColorStop(1,pr.color+'00');cx.fillStyle=g;cx.fillRect(b.x-48,b.y-48,96,96)}
+cx.fillStyle='#4fc3f7';cx.beginPath();cx.arc(b.x+6,b.y-1,9,0,7);cx.fill();cx.strokeStyle='#0277bd';cx.stroke();
+R('#f8bbd0',b.x-8,b.y-6,5,12);R('#2a2140',b.x-19,b.y-8,13,13);R('#ffcc99',b.x-18,b.y-7,11,11);R(hc,b.x-18,b.y-7,11,4);R(hc,b.x-18,b.y-7,3,9);R('#6d4c41',b.x-14,b.y-1,3,1);R('#6d4c41',b.x-10,b.y-1,3,1);
+if(!p.act){R(Math.floor(t/300)%2?'#ff1744':'#ff8a80',b.x-7,b.y-34,14,15);R('#fff',b.x-1,b.y-32,3,7);R('#fff',b.x-1,b.y-23,3,3)}else{cx.fillStyle=pr.color;cx.font='bold 14px sans-serif';cx.fillText('♥',b.x-6,b.y-22)}});
+const mv=P.path.length>0,all=[...NPC.map(n=>({y:n.y,f:()=>person(n.x,n.y,LOOK[n.id],n.path.length>0,t)})),{y:P.y,f:()=>person(P.x,P.y,LOOK.player,mv,t)}].sort((a,b)=>a.y-b.y);all.forEach(a=>a.f());
+const by=Math.sin(t/200)*2;cx.fillStyle='#ffeb3b';cx.strokeStyle='#2a2140';cx.beginPath();cx.moveTo(P.x-5,P.y-30+by);cx.lineTo(P.x+5,P.y-30+by);cx.lineTo(P.x,P.y-24+by);cx.closePath();cx.fill();cx.stroke();
+FL=FL.filter(f=>t-f.t0<1400);FL.forEach(f=>{const a=Math.max(0,(t-f.t0)/1400);cx.globalAlpha=1-a*a;cx.font='bold 14px sans-serif';cx.lineWidth=3;cx.strokeStyle='#fff';cx.strokeText(f.s,f.x-14,f.y-a*30);cx.fillStyle=f.c;cx.fillText(f.s,f.x-14,f.y-a*30)});cx.globalAlpha=1;cx.lineWidth=1}
+function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;update(dt);draw(t);requestAnimationFrame(loop)}
+function pos(e){const r=cv.getBoundingClientRect();return[(e.clientX-r.left)*640/r.width,(e.clientY-r.top)*420/r.height]}
+function roomAtPt(x,y){const z=ROOMS.find(r=>x>=r[0]&&x<=r[0]+r[2]&&y>=r[1]&&y<=r[1]+r[3]);return z?z[6]:null}
+cv.addEventListener('pointermove',e=>{hov=roomAtPt(...pos(e));cv.style.cursor=hov?'pointer':'default'});
+cv.addEventListener('click',e=>{const r=roomAtPt(...pos(e));if(r){SFX.click();goRoom(r)}});
+home();requestAnimationFrame(loop);
+</script></body></html>
